@@ -82,7 +82,9 @@
 #include "TM0AntennaVertBC.h"
 #include "TM0PECVertBC.h"
 #include "PenaltyCircuitPotential.h"
+//#include "RCCircuitPotential.h"
 #include "CircuitDirichletPotential.h"
+#include "CircuitNeumannPotential.h"
 #include "SecondaryElectronBC.h"
 #include "FieldEmissionBC.h"
 #include "SchottkyEmissionBC.h"
@@ -96,6 +98,12 @@
 #include "NeumannCircuitVoltageMoles_KV.h"
 #include "NeumannCircuitVoltageNew.h"
 #include "DCIonBC.h"
+#include "TraditionalElectronBC.h"
+#include "TraditionalIonAdvectionBC.h"
+#include "TraditionalIonDiffusionBC.h"
+#include "TraditionalEnergyBC.h"
+#include "SecondaryEnergyBC.h"
+#include "FieldEnergyBC.h"
 
 // Actions
 
@@ -231,7 +239,9 @@ ZapdosApp::registerObjects(Factory & factory)
   registerBoundaryCondition(ElectronDiffusionDoNothingBC);
   registerBoundaryCondition(TM0PECVertBC);
   registerBoundaryCondition(PenaltyCircuitPotential);
+//  registerBoundaryCondition(RCCircuitPotential);
   registerBoundaryCondition(CircuitDirichletPotential);
+   registerBoundaryCondition(CircuitNeumannPotential);
   registerBoundaryCondition(SecondaryElectronBC);
   registerBoundaryCondition(FieldEmissionBC);
   registerBoundaryCondition(SchottkyEmissionBC);
@@ -243,6 +253,13 @@ ZapdosApp::registerObjects(Factory & factory)
   registerBoundaryCondition(HagelaarEnergyAdvectionBC);
   registerBoundaryCondition(NeumannCircuitVoltageMoles_KV);
   registerBoundaryCondition(DCIonBC);
+  registerBoundaryCondition(TraditionalElectronBC);
+  registerBoundaryCondition(TraditionalIonAdvectionBC);
+  registerBoundaryCondition(TraditionalIonDiffusionBC);
+  registerBoundaryCondition(TraditionalEnergyBC);
+  registerBoundaryCondition(SecondaryEnergyBC);
+  registerBoundaryCondition(FieldEnergyBC);
+  
   registerInterfaceKernel(InterfaceAdvection);
   registerInterfaceKernel(HphiRadialInterface);
   registerInterfaceKernel(InterfaceLogDiffusionElectrons);

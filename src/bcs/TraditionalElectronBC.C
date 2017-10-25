@@ -1,7 +1,7 @@
-#include "HagelaarElectronBC.h"
+#include "TraditionalElectronBC.h"
 
 template<>
-InputParameters validParams<HagelaarElectronBC>()
+InputParameters validParams<TraditionalElectronBC>()
 {
   InputParameters params = validParams<IntegratedBC>();
   params.addRequiredParam<Real>("r", "The reflection coefficient");
@@ -11,7 +11,7 @@ InputParameters validParams<HagelaarElectronBC>()
   return params;
 }
 
-HagelaarElectronBC::HagelaarElectronBC(const InputParameters & parameters) :
+TraditionalElectronBC::TraditionalElectronBC(const InputParameters & parameters) :
   IntegratedBC(parameters),
 
   _r_units(1. / getParam<Real>("position_units")),
@@ -35,7 +35,7 @@ HagelaarElectronBC::HagelaarElectronBC(const InputParameters & parameters) :
 {}
 
 Real
-HagelaarElectronBC::computeQpResidual()
+TraditionalElectronBC::computeQpResidual()
 {
   if ( _normals[_qp] * -1.0 * -_grad_potential[_qp] > 0.0) {
     _a = 1.0;
@@ -46,11 +46,11 @@ HagelaarElectronBC::computeQpResidual()
 
   _v_thermal = std::sqrt(8 * _e[_qp] * 2.0 / 3 * std::exp(_mean_en[_qp] - _u[_qp]) / (M_PI * _massem[_qp]));
 
-  return _test[_i][_qp] * _r_units * (1. - _r) / (1. + _r) * (-(2 * _a - 1) * _muem[_qp] * -_grad_potential[_qp] * _r_units * std::exp(_u[_qp]) * _normals[_qp] + 0.5 * _v_thermal * std::exp(_u[_qp]));
+  return _test[_i][_qp] * _r_units * (-_a * _muem[_qp] * -_grad_potential[_qp] * _r_units * std::exp(_u[_qp]) * _normals[_qp] + 0.25 * _v_thermal * std::exp(_u[_qp]));
 }
 
 Real
-HagelaarElectronBC::computeQpJacobian()
+TraditionalElectronBC::computeQpJacobian()
 {
   if ( _normals[_qp] * -1.0 * -_grad_potential[_qp] > 0.0) {
     _a = 1.0;
@@ -63,11 +63,11 @@ HagelaarElectronBC::computeQpJacobian()
   _v_thermal = std::sqrt(8 * _e[_qp] * 2.0 / 3 * std::exp(_mean_en[_qp] - _u[_qp]) / (M_PI * _massem[_qp]));
   _d_v_thermal_d_u = 0.5 * _v_thermal * -_phi[_j][_qp];
 
-  return _test[_i][_qp] * _r_units * (1. - _r) / (1. + _r) * (-(2 * _a - 1) * _muem[_qp] * -_grad_potential[_qp] * _r_units * std::exp(_u[_qp]) * _phi[_j][_qp] * _normals[_qp] - (2. * _a - 1.) * _d_muem_d_actual_mean_en[_qp] * _actual_mean_en * -_phi[_j][_qp] * -_grad_potential[_qp] * _r_units * std::exp(_u[_qp]) * _normals[_qp] + 0.5 * _d_v_thermal_d_u * std::exp(_u[_qp]) + 0.5 * _v_thermal * std::exp(_u[_qp]) * _phi[_j][_qp]);
+  return _test[_i][_qp] * _r_units * (-_a * _muem[_qp] * -_grad_potential[_qp] * _r_units * std::exp(_u[_qp]) * _phi[_j][_qp] * _normals[_qp] - _a * _d_muem_d_actual_mean_en[_qp] * _actual_mean_en * -_phi[_j][_qp] * -_grad_potential[_qp] * _r_units * std::exp(_u[_qp]) * _normals[_qp] + 0.25 * _d_v_thermal_d_u * std::exp(_u[_qp]) + 0.25 * _v_thermal * std::exp(_u[_qp]) * _phi[_j][_qp]);
 }
 
 Real
-HagelaarElectronBC::computeQpOffDiagJacobian(unsigned int jvar)
+TraditionalElectronBC::computeQpOffDiagJacobian(unsigned int jvar)
 {
   if (jvar == _potential_id)
   {
@@ -78,7 +78,7 @@ HagelaarElectronBC::computeQpOffDiagJacobian(unsigned int jvar)
 
     _v_thermal = std::sqrt(8 * _e[_qp] * 2.0 / 3 * std::exp(_mean_en[_qp] - _u[_qp]) / (M_PI * _massem[_qp]));
 
-    return _test[_i][_qp] * _r_units * (1. - _r) / (1. + _r) * (-(2 * _a - 1) * _muem[_qp] * -_grad_phi[_j][_qp] * _r_units * std::exp(_u[_qp]) * _normals[_qp]);
+    return _test[_i][_qp] * _r_units * -_a * _muem[_qp] * -_grad_phi[_j][_qp] * _r_units * std::exp(_u[_qp]) * _normals[_qp];
   }
 
   else if (jvar == _mean_en_id)
@@ -94,7 +94,7 @@ HagelaarElectronBC::computeQpOffDiagJacobian(unsigned int jvar)
     _d_v_thermal_d_mean_en  = 0.5 * _v_thermal * _phi[_j][_qp];
     _actual_mean_en = std::exp(_mean_en[_qp] - _u[_qp]);
 
-    return _test[_i][_qp] * _r_units * (1. - _r) / (1. + _r) * (-(2 * _a - 1) * _d_muem_d_actual_mean_en[_qp] * _actual_mean_en * _phi[_j][_qp] * -_grad_potential[_qp] * _r_units * std::exp(_u[_qp]) * _normals[_qp] + 0.5 * _d_v_thermal_d_mean_en * std::exp(_u[_qp]));
+    return _test[_i][_qp] * _r_units * (-_a * _d_muem_d_actual_mean_en[_qp] * _actual_mean_en * _phi[_j][_qp] * -_grad_potential[_qp] * _r_units * std::exp(_u[_qp]) * _normals[_qp] + 0.25 * _d_v_thermal_d_mean_en * std::exp(_u[_qp]));
   }
 
   else

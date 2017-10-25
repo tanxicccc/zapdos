@@ -1,18 +1,18 @@
-#ifndef HAGELAARENERGYBC_H
-#define HAGELAARENERGYBC_H
+#ifndef TRADITIONALENERGYBC_H
+#define TRADITIONALENERGYBC_H
 
 #include "IntegratedBC.h"
 
-class HagelaarEnergyBC;
+class	TraditionalEnergyBC;
 
 template<>
-InputParameters validParams<HagelaarEnergyBC>();
+InputParameters validParams<TraditionalEnergyBC>();
 
-class HagelaarEnergyBC : public IntegratedBC
+class   TraditionalEnergyBC : public IntegratedBC
 {
 public:
 
-  HagelaarEnergyBC(const InputParameters & parameters);
+	TraditionalEnergyBC(const InputParameters & parameters);
 
 protected:
   virtual Real computeQpResidual();
@@ -59,7 +59,7 @@ protected:
   Real  _d_n_gamma_d_u;
   Real  _d_n_gamma_d_em;
   Real _actual_mean_en;
-
+  
 };
 
-#endif //HAGELAARENERGYBC_H
+#endif //TRADITIONALENERGYBC_H

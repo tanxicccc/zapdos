@@ -1,18 +1,18 @@
-#ifndef HAGELAARENERGYBC_H
-#define HAGELAARENERGYBC_H
+#ifndef FIELDENERGYBC_H
+#define FIELDENERGYBC_H
 
 #include "IntegratedBC.h"
 
-class HagelaarEnergyBC;
+class FieldEnergyBC;
 
 template<>
-InputParameters validParams<HagelaarEnergyBC>();
+InputParameters validParams<FieldEnergyBC>();
 
-class HagelaarEnergyBC : public IntegratedBC
+class FieldEnergyBC : public IntegratedBC
 {
 public:
 
-  HagelaarEnergyBC(const InputParameters & parameters);
+	FieldEnergyBC(const InputParameters & parameters);
 
 protected:
   virtual Real computeQpResidual();
@@ -44,7 +44,8 @@ protected:
   const MaterialProperty<Real> & _se_energy;
   const MaterialProperty<Real> & _mumean_en;
   const MaterialProperty<Real> & _d_mumean_en_d_actual_mean_en;
-
+  const MaterialProperty<Real> & _work_function;
+  const MaterialProperty<Real> & _field_enhancement;
 
   Real  _a;
   Real  _v_thermal;
@@ -59,7 +60,17 @@ protected:
   Real  _d_n_gamma_d_u;
   Real  _d_n_gamma_d_em;
   Real _actual_mean_en;
+  
+  Real _tau;
+  bool _relax;
+  std::string _potential_units;
 
+        // Unique variables
+
+        Real _voltage_scaling;
+        Real FE_a;
+        Real FE_b;
+        Real FE_c;
 };
 
-#endif //HAGELAARENERGYBC_H
+#endif //FIELDENERGYBC_H
